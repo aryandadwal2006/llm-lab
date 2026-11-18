@@ -1,0 +1,6 @@
+{"prompt":"Explain gradient descent in one sentence.","completion":"Gradient descent repeatedly adjusts model parameters in the direction that reduces the loss."}
+{"prompt":"What is the difference between a list and a tuple in Python?","completion":"A list is mutable, so its elements can be changed, while a tuple is immutable after creation."}
+{"prompt":"Explain overfitting briefly.","completion":"Overfitting occurs when a model fits training data too closely and performs poorly on unseen examples."}
+{"prompt":"What does a confusion matrix measure?","completion":"A confusion matrix counts true positives, true negatives, false positives, and false negatives for a classifier."}
+{"prompt":"Why do we use a validation set?","completion":"A validation set estimates generalization during model development and helps select settings without using the test set."}
+{"prompt":"Define knowledge distillation.","completion":"Knowledge distillation trains a smaller student model to imitate the outputs or behavior of a larger teacher model."}
