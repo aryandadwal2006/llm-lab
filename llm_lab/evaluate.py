@@ -11,7 +11,7 @@ from .common import DEFAULT_MODEL, load_causal_model, load_tokenizer, read_jsonl
 
 
 def normalize(text: str) -> str:
-    return re.sub(r"\s+", " ", text.strip().lower())
+    return re.sub(r"\\s+", " ", text.strip().lower())
 
 
 def token_f1(prediction: str, reference: str) -> float:
@@ -29,7 +29,7 @@ def valid_json_object(text: str) -> bool:
     cleaned = text.strip()
     if cleaned.startswith(chr(96) * 3):
         lines = cleaned.splitlines()
-        cleaned = "\n".join(lines[1:-1]).strip()
+        cleaned = "\\n".join(lines[1:-1]).strip()
     try:
         return isinstance(json.loads(cleaned), dict)
     except json.JSONDecodeError:
@@ -45,6 +45,8 @@ def run_model(model_id: str, rows: list[dict], max_new_tokens: int, seed: int):
     results = []
     for row in rows:
         inputs = tokenizer(row["prompt"], return_tensors="pt", truncation=True, max_length=512).to(device)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
         start = time.perf_counter()
         with torch.inference_mode():
             output = model.generate(
@@ -53,6 +55,8 @@ def run_model(model_id: str, rows: list[dict], max_new_tokens: int, seed: int):
                 do_sample=False,
                 pad_token_id=tokenizer.pad_token_id,
             )
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
         elapsed = time.perf_counter() - start
         text = tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
         output_tokens = max(0, output.shape[1] - inputs["input_ids"].shape[1])
