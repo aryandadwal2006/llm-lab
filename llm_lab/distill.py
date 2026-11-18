@@ -66,8 +66,8 @@ def logits_distill(args):
     rows = read_jsonl(args.data)
     tokenizer = AutoTokenizer.from_pretrained(args.teacher)
     student_tokenizer = AutoTokenizer.from_pretrained(args.student)
-    if len(tokenizer) != len(student_tokenizer):
-        raise ValueError("logit distillation requires teacher and student tokenizers with equal vocabulary sizes")
+    if tokenizer.get_vocab() != student_tokenizer.get_vocab():
+        raise ValueError("logit distillation requires identical teacher and student token-id mappings")
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
