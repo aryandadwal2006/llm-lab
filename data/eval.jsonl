@@ -1,0 +1,6 @@
+{"task_type":"reasoning","prompt":"Solve 17 * 23. Return the answer as 'The answer is N.'","completion":"The answer is 391."}
+{"task_type":"reasoning","prompt":"A box has 12 red balls and 8 blue balls. How many balls are there in total?","completion":"There are 20 balls in total."}
+{"task_type":"reasoning","prompt":"What is the next number in the sequence 2, 4, 8, 16? Give one sentence.","completion":"The next number is 32 because each term is twice the previous term."}
+{"task_type":"tool_use","prompt":"Return only a JSON object for a calculator tool call that adds 14 and 29. Use keys tool and arguments, and put the expression in arguments.expression.","completion":"{\"tool\":\"calculator\",\"arguments\":{\"expression\":\"14 + 29\"}}"}
+{"task_type":"tool_use","prompt":"Return only a JSON object for a web search tool call searching for the latest PyTorch documentation. Use keys tool and arguments, and put the query in arguments.query.","completion":"{\"tool\":\"web_search\",\"arguments\":{\"query\":\"latest PyTorch documentation\"}}"}
+{"task_type":"general","prompt":"In one sentence, explain what LoRA changes during fine-tuning.","completion":"LoRA freezes the original model weights and learns small low-rank update matrices in selected layers."}
