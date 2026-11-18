@@ -1,0 +1,5 @@
+{"prompt":"What is 2 + 2?","chosen":"4.","rejected":"5."}
+{"prompt":"Explain what a hash table does.","chosen":"A hash table maps keys to values using a hash function, giving average constant-time lookup, insertion, and deletion.","rejected":"A hash table is a kind of sorting algorithm that always stores items in order."}
+{"prompt":"What does CPU stand for?","chosen":"CPU stands for central processing unit.","rejected":"CPU stands for computer power utility."}
+{"prompt":"Explain a Python dictionary.","chosen":"A Python dictionary stores key-value pairs and supports average constant-time lookup by key.","rejected":"A Python dictionary is an ordered sequence that only stores numbers."}
+{"prompt":"What is the purpose of regularization?","chosen":"Regularization discourages overly complex models to reduce overfitting and improve generalization.","rejected":"Regularization makes the training dataset larger by duplicating samples."}
