@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-adaptation-lab"
+version = "0.1.0"
+description = "Minimal experiments for LLM adaptation, distillation, alignment, and RL"
+requires-python = ">=3.10,<3.13"
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["llm_lab*"]
