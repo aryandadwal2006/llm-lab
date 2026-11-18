@@ -1,6 +1,6 @@
 # LLM Adaptation, Distillation & RL Alignment Lab
 
-A small, local-first implementation of instruction tuning, knowledge distillation, preference learning, PPO-based RLHF, RLAIF, and inference benchmarking. It also includes matching PPO baselines for Gymnasium using Stable-Baselines3 and Ray RLlib.
+A small, local-first implementation of instruction tuning, knowledge distillation, preference learning, PPO-based RLHF, RLAIF, and inference benchmarking. It also includes PPO baselines and fixed-seed ablations for Gymnasium using Stable-Baselines3 and Ray RLlib.
 
 All examples use open-weight models and local files. No API keys, hosted inference services, experiment trackers, or paid endpoints are required. The first run downloads the selected model from Hugging Face.
 
@@ -20,7 +20,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-On Windows PowerShell, activate with `.venv\\Scripts\\Activate.ps1`.
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1`.
 
 For optional components:
 
@@ -85,7 +85,7 @@ Sequence-level distillation first samples teacher completions, then trains the s
 python -m llm_lab.distill --mode sequence --teacher Qwen/Qwen2.5-1.5B-Instruct --student Qwen/Qwen2.5-0.5B-Instruct --data data/sft.jsonl --output runs/distill-sequence
 ```
 
-The teacher and student must use compatible tokenizers for logit-level distillation. The script checks vocabulary sizes before training.
+Logit-level distillation requires identical teacher and student token-id mappings. Sequence-level distillation supports different tokenizers because the teacher outputs are converted to text and tokenized again by the student tokenizer.
 
 ### 3. Reward modelling
 
@@ -111,7 +111,7 @@ Train a reward model first, then use it with a policy and a value model:
 python -m llm_lab.train_ppo --data data/sft.jsonl --policy runs/sft --base-model Qwen/Qwen2.5-0.5B-Instruct --reward-model runs/reward --output runs/ppo
 ```
 
-The implementation uses TRL's experimental PPO trainer. PPO is computationally heavier than SFT or DPO; start with a small number of episodes and a compact model. The value head is initialized from the base model and learned during PPO.
+The implementation uses TRL's experimental PPO trainer. PPO is computationally heavier than SFT or DPO; start with a small number of episodes and a compact model. The value model is initialized from the base model and trained during PPO.
 
 ### 6. RLAIF-style preference generation
 
@@ -136,9 +136,13 @@ The report includes exact-match and token F1 for reference completions, JSON val
 
 ### 8. vLLM inference
 
+For a PEFT adapter created by the SFT command:
+
 ```bash
-python -m llm_lab.infer_vllm --model runs/sft --prompt "Explain LoRA in two sentences."
+python -m llm_lab.infer_vllm --model Qwen/Qwen2.5-0.5B-Instruct --lora runs/sft --prompt "Explain LoRA in two sentences."
 ```
+
+For a regular full model, omit `--lora`.
 
 ### 9. PPO on Gymnasium
 
@@ -154,7 +158,13 @@ Ray RLlib:
 python -m llm_lab.rl_rllib --env CartPole-v1 --iterations 10 --output runs/cartpole_rllib
 ```
 
-These scripts train and evaluate standard Gymnasium environments independently of LLM RLHF.
+Fixed-seed PPO hyperparameter ablations with Stable-Baselines3:
+
+```bash
+python -m llm_lab.rl_ablation --env CartPole-v1 --seeds 42,43,44 --learning-rates 0.0003,0.0001 --entropy-coefs 0.0,0.01 --output runs/ppo_ablation.json
+```
+
+The ablation runner records each seed/configuration and mean/std evaluation reward in JSON. These scripts provide repeatable PPO baselines and an ablation harness; they do not claim exact reproduction of a particular paper's reported scores. Reproducing a paper requires matching its environment version, preprocessing, network, hyperparameters, training budget, and evaluation protocol.
 
 ## CLI options
 
@@ -162,7 +172,7 @@ Every training script exposes `--help`. Common controls include `--model`, `--da
 
 ## Reproducibility and limitations
 
-- Training scripts set explicit random seeds and use fixed evaluation decoding.
+- Training scripts set explicit random seeds and use greedy decoding for controlled language-model evaluation.
 - Keep the baseline and candidate evaluation prompts, decoding parameters, batch sizes, and hardware identical.
 - The included datasets are deliberately tiny examples; replace them before making quality claims.
 - Reward models and self-judging RLAIF can encode their own biases. Inspect generated preferences before training.
