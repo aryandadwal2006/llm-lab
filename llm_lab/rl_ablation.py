@@ -35,6 +35,7 @@ def main():
         )
         model.learn(total_timesteps=args.timesteps)
         eval_env = gym.make(args.env)
+        eval_env.reset(seed=seed)
         mean_reward, std_reward = evaluate_policy(
             model,
             eval_env,
